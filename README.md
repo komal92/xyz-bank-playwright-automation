@@ -3,7 +3,6 @@
 ## Project Overview
 This repository contains an automated test solution for the **XYZ Bank** demo application using:
 - **Playwright** + **TypeScript**
-- **BDD (Cucumber)** with `.feature` files
 - **Page Object Model (POM)** design pattern
 - Test suite execution via **tags** and **separate folders**
 
