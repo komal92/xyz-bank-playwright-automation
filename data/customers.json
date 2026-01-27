@@ -1,0 +1,37 @@
+[
+  {
+    "firstName": "Minerva",
+    "lastName": "McGonagall",
+    "postCode": "EH8 8DX"
+  },
+  {
+    "firstName": "Severus",
+    "lastName": "Snape",
+    "postCode": "DH1 3AY"
+  },
+  {
+    "firstName": "Rubeus",
+    "lastName": "Hagrid",
+    "postCode": "LA22 0JR"
+  },
+  {
+    "firstName": "Gilderoy",
+    "lastName": "Lockhart",
+    "postCode": "SW1A 1AA"
+  },
+  {
+    "firstName": "Filius",
+    "lastName": "Flitwick",
+    "postCode": "CV3 5EA"
+  },
+  {
+    "firstName": "Pomona",
+    "lastName": "Sprout",
+    "postCode": "TN2 4DB"
+  },
+  {
+    "firstName": "Aurora",
+    "lastName": "Sinistra",
+    "postCode": "EC1A 1BB"
+  }
+]

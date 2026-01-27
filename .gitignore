@@ -5,3 +5,21 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Logs and snapshots
+logs/
+visual-regression.spec.ts-snapshots/
+
+# Allure Report
+allure-report/
+allure-results/
+
+# OS / Editor
+.DS_Store
+.vscode/
+
+# Logs
+*.log
+
+# Temporary / local tooling
+coverage/

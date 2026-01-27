@@ -1,0 +1,58 @@
+[
+  {
+    "customerName": "Minerva McGonagall",
+    "currency": "Pound"
+  },
+  {
+    "customerName": "Minerva McGonagall",
+    "currency": "Dollar"
+  },
+  {
+    "customerName": "Severus Snape",
+    "currency": "Rupee"
+  },
+  {
+    "customerName": "Severus Snape",
+    "currency": "Pound"
+  },
+  {
+    "customerName": "Rubeus Hagrid",
+    "currency": "Dollar"
+  },
+  {
+    "customerName": "Rubeus Hagrid",
+    "currency": "Rupee"
+  },
+  {
+    "customerName": "Gilderoy Lockhart",
+    "currency": "Pound"
+  },
+  {
+    "customerName": "Gilderoy Lockhart",
+    "currency": "Dollar"
+  },
+  {
+    "customerName": "Filius Flitwick",
+    "currency": "Rupee"
+  },
+  {
+    "customerName": "Filius Flitwick",
+    "currency": "Pound"
+  },
+  {
+    "customerName": "Pomona Sprout",
+    "currency": "Dollar"
+  },
+  {
+    "customerName": "Pomona Sprout",
+    "currency": "Rupee"
+  },
+  {
+    "customerName": "Aurora Sinistra",
+    "currency": "Pound"
+  },
+  {
+    "customerName": "Aurora Sinistra",
+    "currency": "Dollar"
+  }
+]
