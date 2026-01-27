@@ -1,98 +1,169 @@
 import { test, expect } from "../../fixtures";
 import { LoginPage } from "../../../pages/common/login.page";
 import { ManagerPage } from "../../../pages/manager/manager.page";
+import { AddCustomerPage } from "../../../pages/manager/addCustomer.page";
 import { OpenAccountPage } from "../../../pages/manager/openAccount.page";
-import { getOpenAccountData } from "../../helpers/dataLoader";
+import { CustomerListPage } from "../../../pages/manager/customerList.page";
+import { getCustomerCreationData, getOpenAccountData } from "../../helpers/dataLoader";
 
-// Define Open Account interface
-interface OpenAccount {
-  customerName: string;
-  currency: string;
+interface Customer {
+  firstName: string;
+  lastName: string;
+  postCode: string;
 }
 
-const openAccountData: OpenAccount[] = getOpenAccountData();
+interface OpenAccountConfig {
+  customerName: string;
+  currencies: string[];
+}
 
-// Entire suite is end-to-end
-test.describe("🏦 Open Account - XYZ Bank", { tag: "@e2e" }, () => {
+const customers: Customer[] = getCustomerCreationData();
+const openAccountConfig: OpenAccountConfig[] = getOpenAccountData();
+
+function fullName(c: Customer) {
+  return `${c.firstName} ${c.lastName}`;
+}
+
+function findPostCode(customerName: string): string {
+  const match = customers.find((c) => fullName(c) === customerName);
+  if (!match) throw new Error(`No postcode found for customerName="${customerName}" in customers.json`);
+  return match.postCode;
+}
+
+function countAccountTokens(accountText: string | null): number {
+  if (!accountText) return 0;
+  return accountText.split(/\s+/).filter(Boolean).length;
+}
+
+test.describe("Open Account - XYZ Bank", { tag: "@e2e" }, () => {
   let loginPage: LoginPage;
   let managerPage: ManagerPage;
+  let addCustomerPage: AddCustomerPage;
   let openAccountPage: OpenAccountPage;
+  let customerListPage: CustomerListPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     managerPage = new ManagerPage(page);
+    addCustomerPage = new AddCustomerPage(page);
     openAccountPage = new OpenAccountPage(page);
+    customerListPage = new CustomerListPage(page);
 
     await loginPage.navigateToLogin();
     await loginPage.loginAsManager();
   });
 
+  async function addAllCustomers(): Promise<void> {
+    for (const c of customers) {
+      await managerPage.navigateToAddCustomer();
+      await addCustomerPage.fillCustomerForm(c.firstName, c.lastName, c.postCode);
+
+      const dialogMessage = await addCustomerPage.clickAddCustomerAndGetDialogMessage();
+      await addCustomerPage.verifyCustomerAddedDialog(dialogMessage);
+    }
+  }
+
   test(
     "should navigate to Open Account page",
     { tag: ["@smoke", "@regression"] },
     async () => {
-      const isManagerPageLoaded = await managerPage.isManagerPageLoaded();
-      expect(isManagerPageLoaded).toBeTruthy();
+      expect(await managerPage.isManagerPageLoaded()).toBeTruthy();
 
       await managerPage.navigateToOpenAccount();
-      const isOpenAccountPageLoaded =
-        await openAccountPage.isOpenAccountPageLoaded();
-      expect(isOpenAccountPageLoaded).toBeTruthy();
+      expect(await openAccountPage.isOpenAccountPageLoaded()).toBeTruthy();
     }
   );
 
-  openAccountData.forEach((account: OpenAccount) => {
-    test(
-      `should open ${account.currency} account for ${account.customerName}`,
-      { tag: "@regression" },
-      async () => {
-        await managerPage.navigateToOpenAccount();
-        expect(await openAccountPage.isOpenAccountPageLoaded()).toBeTruthy();
-
-        const dialogPromise = openAccountPage.page.waitForEvent("dialog");
-
-        await openAccountPage.openAccount(
-          account.customerName,
-          account.currency
-        );
-
-        const dialog = await dialogPromise;
-        expect(dialog.message()).toContain("Account created successfully");
-        await dialog.accept();
-      }
-    );
-  });
-
   test(
-    "should display all dropdown options",
+    "should allow selecting an existing customer from dropdown",
     { tag: "@regression" },
     async () => {
+      await addAllCustomers();
+
+      const cfg = openAccountConfig[0];
+
+      await managerPage.navigateToOpenAccount();
+      expect(await openAccountPage.isOpenAccountPageLoaded()).toBeTruthy();
+
+      await openAccountPage.selectCustomer(cfg.customerName);
+
+      const selected = await openAccountPage.customerSelect.inputValue();
+      expect(selected).toBeTruthy();
+    }
+  );
+
+  test(
+    "should open account for one user and validate account count increases",
+    { tag: ["@smoke", "@regression"] },
+    async () => {
+      await addAllCustomers();
+
+      const cfg = openAccountConfig.find((x) => x.currencies.length === 1) ?? openAccountConfig[0];
+      const customerName = cfg.customerName;
+      const postCode = findPostCode(customerName);
+      const currency = cfg.currencies[0];
+
+      // Before opening account: should be empty
+      await managerPage.navigateToCustomerList();
+      await customerListPage.searchCustomer(customerName.split(" ")[0]);
+
+      const before = await customerListPage.getCustomerAccountNumbers(customerName, postCode);
+      expect(countAccountTokens(before)).toBe(0);
+
+      // Open account
+      await managerPage.navigateToOpenAccount();
+      expect(await openAccountPage.isOpenAccountPageLoaded()).toBeTruthy();
+
+      const msg = await openAccountPage.openAccountAndGetDialogMessage(customerName, currency);
+      await openAccountPage.verifyAccountCreatedDialog(msg);
+
+      // After opening: should be 1
+      await managerPage.navigateToCustomerList();
+      await customerListPage.searchCustomer(customerName.split(" ")[0]);
+
+      const after = await customerListPage.getCustomerAccountNumbers(customerName, postCode);
+      expect(countAccountTokens(after)).toBe(1);
+    }
+  );
+
+  test(
+    "should open accounts for multiple users and validate account count equals configured currencies length",
+    { tag: "@regression" },
+    async () => {
+      await addAllCustomers();
+
+      for (const cfg of openAccountConfig) {
+        const customerName = cfg.customerName;
+        const postCode = findPostCode(customerName);
+
+        for (const currency of cfg.currencies) {
+          await managerPage.navigateToOpenAccount();
+          expect(await openAccountPage.isOpenAccountPageLoaded()).toBeTruthy();
+
+          const msg = await openAccountPage.openAccountAndGetDialogMessage(customerName, currency);
+          await openAccountPage.verifyAccountCreatedDialog(msg);
+        }
+
+        await managerPage.navigateToCustomerList();
+        await customerListPage.searchCustomer(customerName.split(" ")[0]);
+
+        const accountsText = await customerListPage.getCustomerAccountNumbers(customerName, postCode);
+        expect(countAccountTokens(accountsText)).toBe(cfg.currencies.length);
+      }
+    }
+  );
+
+  test(
+    "should display all dropdown controls on Open Account page",
+    { tag: "@regression" },
+    async () => {
+      await addAllCustomers();
+
       await managerPage.navigateToOpenAccount();
 
       await expect(openAccountPage.customerSelect).toBeVisible();
       await expect(openAccountPage.currencySelect).toBeVisible();
       await expect(openAccountPage.processButton).toBeVisible();
-    }
-  );
-
-  test(
-    "should select customer and currency correctly",
-    { tag: "@regression" },
-    async () => {
-      const firstAccount = openAccountData[0];
-
-      await managerPage.navigateToOpenAccount();
-
-      await openAccountPage.selectCustomer(firstAccount.customerName);
-      await openAccountPage.selectCurrency(firstAccount.currency);
-
-      const selectedCustomer =
-        await openAccountPage.customerSelect.inputValue();
-      const selectedCurrency =
-        await openAccountPage.currencySelect.inputValue();
-
-      expect(selectedCustomer).toBeTruthy();
-      expect(selectedCurrency).toBeTruthy();
     }
   );
 });

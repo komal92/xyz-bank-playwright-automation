@@ -4,6 +4,7 @@ export class ManagerPage {
   readonly page: Page;
 
   // Locators
+  readonly addCustomerTab: Locator;
   readonly addCustomerButton: Locator;
   readonly openAccountButton: Locator;
   readonly customersButton: Locator;
@@ -11,16 +12,17 @@ export class ManagerPage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Initialize locators
-    this.addCustomerButton = page.getByRole("button", { name: "Add Customer" });
+    this.addCustomerTab = page.locator("button[ng-click='addCust()']");
+    this.addCustomerButton = page.locator("button[type='submit']");
     this.openAccountButton = page.getByRole("button", { name: "Open Account" });
     this.customersButton = page.getByRole("button", { name: "Customers" });
     this.logoutButton = page.getByRole("button", { name: "Logout" });
   }
 
   async navigateToAddCustomer() {
-    await this.addCustomerButton.click();
+    await this.addCustomerTab.click();
     await this.page.waitForURL(/addCust/);
   }
 
@@ -41,7 +43,7 @@ export class ManagerPage {
 
   async isManagerPageLoaded(): Promise<boolean> {
     try {
-      await expect(this.addCustomerButton).toBeVisible();
+      await expect(this.addCustomerTab).toBeVisible();
       await expect(this.openAccountButton).toBeVisible();
       await expect(this.customersButton).toBeVisible();
       return true;
