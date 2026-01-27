@@ -1,58 +1,30 @@
 [
   {
     "customerName": "Minerva McGonagall",
-    "currency": "Pound"
-  },
-  {
-    "customerName": "Minerva McGonagall",
-    "currency": "Dollar"
+    "currencies": ["Pound"]
   },
   {
     "customerName": "Severus Snape",
-    "currency": "Rupee"
-  },
-  {
-    "customerName": "Severus Snape",
-    "currency": "Pound"
+    "currencies": ["Rupee", "Pound"]
   },
   {
     "customerName": "Rubeus Hagrid",
-    "currency": "Dollar"
-  },
-  {
-    "customerName": "Rubeus Hagrid",
-    "currency": "Rupee"
+    "currencies": ["Dollar", "Rupee", "Pound"]
   },
   {
     "customerName": "Gilderoy Lockhart",
-    "currency": "Pound"
-  },
-  {
-    "customerName": "Gilderoy Lockhart",
-    "currency": "Dollar"
+    "currencies": ["Pound", "Dollar"]
   },
   {
     "customerName": "Filius Flitwick",
-    "currency": "Rupee"
-  },
-  {
-    "customerName": "Filius Flitwick",
-    "currency": "Pound"
+    "currencies": ["Rupee"]
   },
   {
     "customerName": "Pomona Sprout",
-    "currency": "Dollar"
-  },
-  {
-    "customerName": "Pomona Sprout",
-    "currency": "Rupee"
+    "currencies": ["Dollar", "Rupee"]
   },
   {
     "customerName": "Aurora Sinistra",
-    "currency": "Pound"
-  },
-  {
-    "customerName": "Aurora Sinistra",
-    "currency": "Dollar"
+    "currencies": ["Pound", "Dollar", "Rupee"]
   }
 ]

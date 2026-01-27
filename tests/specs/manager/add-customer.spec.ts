@@ -152,7 +152,7 @@ test.describe("Add Customer - XYZ Bank", { tag: "@e2e" }, () => {
 
   // Smoke + E2E: immediate availability check
   test(
-    "should display customer in list immediately after creation",
+    "should display customer in list immediately after creation and has no account numbers",
     { tag: ["@smoke", "@e2e"] },
     async () => {
       const firstCustomer = customerData[0];
@@ -178,6 +178,7 @@ test.describe("Add Customer - XYZ Bank", { tag: "@e2e" }, () => {
       const postCode = await customerListPage.getCustomerPostCode(fullName);
       expect(postCode).not.toBeNull();
       expect(postCode!).toContain(firstCustomer.postCode);
+      expect(await customerListPage.hasNoAccountNumbers(fullName, firstCustomer.postCode)).toBeTruthy();
     }
   );
 });

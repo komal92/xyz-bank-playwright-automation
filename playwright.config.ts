@@ -27,11 +27,18 @@ export default defineConfig({
     headless: process.env.CI ? true : false,
 
     // ✅ Artifacts that make HTML report very useful
-    viewport: { width: 1280, height: 720 },
+   // viewport: { width: 1280, height: 720 },
+   
     trace: "retain-on-failure",         
     screenshot: "only-on-failure",
     video: "retain-on-failure",
+    viewport: null, // 👈 makes browser use full available screen
+    launchOptions: {
+      args: ["--start-maximized"], // Chromium-based browsers
+    },
   },
+
+  
 
   expect: {
     toHaveScreenshot: {
