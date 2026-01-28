@@ -5,39 +5,42 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:tag": "cross-env-shell \"playwright test --grep $TAG\"",
-    "test:tag:browser": "cross-env-shell \"playwright test --grep $TAG --project=$BROWSER\"",
-    "test:smoke": "cross-env TAG=@smoke npm run test:tag",
-    "test:regression": "cross-env TAG=@regression npm run test:tag",
-    "test:e2e": "cross-env TAG=@e2e npm run test:tag",
-    "test:visual": "cross-env TAG=@visual npm run test:tag:browser --silent",
-    "test:visual:update": "cross-env-shell \"playwright test --grep @visual --project=chromium --update-snapshots\"",
-    "test:smoke:chromium": "cross-env TAG=@smoke BROWSER=chromium npm run test:tag:browser",
-    "test:smoke:firefox": "cross-env TAG=@smoke BROWSER=firefox npm run test:tag:browser",
-    "test:smoke:webkit": "cross-env TAG=@smoke BROWSER=webkit npm run test:tag:browser",
-    "test:regression:chromium": "cross-env TAG=@regression BROWSER=chromium npm run test:tag:browser",
-    "test:regression:firefox": "cross-env TAG=@regression BROWSER=firefox npm run test:tag:browser",
-    "test:regression:webkit": "cross-env TAG=@regression BROWSER=webkit npm run test:tag:browser",
-    "test:e2e:chromium": "cross-env TAG=@e2e BROWSER=chromium npm run test:tag:browser",
-    "test:e2e:firefox": "cross-env TAG=@e2e BROWSER=firefox npm run test:tag:browser",
-    "test:e2e:webkit": "cross-env TAG=@e2e BROWSER=webkit npm run test:tag:browser",
+
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:e2e": "playwright test --grep @e2e",
+
+    "test:smoke:chromium": "playwright test --grep @smoke --project=chromium",
+    "test:smoke:firefox": "playwright test --grep @smoke --project=firefox",
+    "test:smoke:webkit": "playwright test --grep @smoke --project=webkit",
+
+    "test:regression:chromium": "playwright test --grep @regression --project=chromium",
+    "test:regression:firefox": "playwright test --grep @regression --project=firefox",
+    "test:regression:webkit": "playwright test --grep @regression --project=webkit",
+
+    "test:e2e:chromium": "playwright test --grep @e2e --project=chromium",
+    "test:e2e:firefox": "playwright test --grep @e2e --project=firefox",
+    "test:e2e:webkit": "playwright test --grep @e2e --project=webkit",
+
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
-    "test:retry": "playwright test --retries=2",
-    "test:chromium": "playwright test --project=chromium",
-    "test:firefox": "playwright test --project=firefox",
-    "test:webkit": "playwright test --project=webkit",
+
+    "test:visual": "playwright test tests/visual --project=chromium",
+    "test:visual:all": "playwright test tests/visual",
+    "test:visual:update": "playwright test tests/visual --project=chromium --update-snapshots",
+
     "report:html": "playwright show-report",
     "report:allure": "allure generate allure-results --clean -o allure-report",
-    "report:allure:open": "allure open allure-report"
+    "report:allure:open": "allure open allure-report",
+
+    "clean": "rimraf test-results playwright-report allure-results allure-report"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@cucumber/cucumber": "^12.6.0",
     "@playwright/test": "^1.58.0",
     "@types/node": "^25.0.10",
     "@types/pngjs": "^6.0.5",
@@ -46,8 +49,6 @@
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "monocart-reporter": "^2.9.23",
-    "pixelmatch": "^7.1.0",
-    "pngjs": "^7.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",

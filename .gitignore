@@ -1,25 +1,24 @@
-# Playwright
+# Dependencies
 node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
 
-# Logs and snapshots
-logs/
-visual-regression.spec.ts-snapshots/
+# Playwright outputs
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
 
-# Allure Report
-allure-report/
+# Allure
 allure-results/
+allure-report/
+
+# Logs
+logs/
+*.log
+
+# Local env
+.env
 
 # OS / Editor
 .DS_Store
 .vscode/
-
-# Logs
-*.log
-
-# Temporary / local tooling
-coverage/

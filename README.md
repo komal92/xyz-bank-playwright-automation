@@ -15,6 +15,16 @@ Application under test:
 - Reporting: Playwright HTML report + Allure report
 - Visual regression using Playwright `toHaveScreenshot()` baseline snapshots
 
+Beyond acceptance criteria
+
+- In addition to the required user stories, this framework includes:
+- Duplicate customer creation handling
+- Withdraw more than available balance (negative scenario)
+- Search and delete customer scenarios
+- Full Manager → Customer end-to-end journey
+- Visual regression testing
+
+Cross-browser execution with tagged suites
 ## Tech stack
 
 - Playwright Test (TypeScript)
@@ -55,4 +65,39 @@ Prerequisites:
 
 Install dependencies:
 ```bash
-npm install
+npm install 
+```
+
+Environment setup
+
+Create a local .env file in the project root (this file is not committed):
+```bash
+BASE_URL=https://www.globalsqa.com/angularJs-protractor/BankingProject
+```
+
+Visual regression testing
+
+Visual tests are implemented using Playwright snapshot testing.
+Run visual tests (compare against baseline):
+```bash
+npm run test:visual
+```
+Update visual baselines:
+```bash
+npm run test:visual
+```
+Note: Visual tests are recommended to run on Chromium only to avoid OS and font rendering differences.
+
+Allure report
+Generate:
+```bash
+npm run report:allure
+```
+Open:
+```bash
+npm run report:allure:open
+```
+
+
+
+
