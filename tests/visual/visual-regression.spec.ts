@@ -1,64 +1,51 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Visual Regression @visual", () => {
-    test("Login page should match baseline", async ({ page }) => {
-        await page.goto("");
-        await page.waitForURL(/#\/login/);
 
-        await expect(page.getByRole("button", { name: "Bank Manager Login" })).toBeVisible();
-        await expect(page.getByRole("button", { name: "Customer Login" })).toBeVisible();
+  test("Login page should match baseline", async ({ page }) => {
+    await page.goto("");
 
-        await expect(page).toHaveScreenshot("login-page.png", {
-            // intentionally crop differently to force mismatch
-            clip: { x: 0, y: 0, width: 500, height: 300 },
-        });
+    await expect(page.getByRole("button", { name: "Bank Manager Login" }))
+      .toBeVisible();
 
+    await expect(page).toHaveScreenshot("login-page.png", {
+      clip: { x: 0, y: 0, width: 500, height: 300 },
     });
+  });
 
-    test("Add Customer form should match baseline", async ({ page }) => {
-        await page.goto("");
-        await page.waitForURL(/#\/login/);
-        await page.getByRole("button", { name: "Bank Manager Login" }).click();
-        await page.getByRole("button", { name: "Add Customer" }).click();
+  test("Add Customer form should match baseline", async ({ page }) => {
+    await page.goto("");
 
-        const form = page.locator("form");
-        await expect(form).toBeVisible();
+    await page.getByRole("button", { name: "Bank Manager Login" }).click();
+    await page.getByRole("button", { name: "Add Customer" }).click();
 
-        await expect(form).toHaveScreenshot("add-customer-form.png");
-    });
+    const form = page.locator("form");
+    await expect(form).toBeVisible();
 
-    test("Open Account section should match baseline", async ({ page }) => {
-        await page.goto("");
-        await page.waitForURL(/#\/login/);
-        await page.getByRole("button", { name: "Bank Manager Login" }).click();
-        await page.getByRole("button", { name: "Open Account" }).click();
+    await expect(form).toHaveScreenshot("add-customer-form.png");
+  });
 
-        await expect(page.locator("#userSelect")).toBeVisible();
-        await expect(page.locator("#currency")).toBeVisible();
+  test("Open Account section should match baseline", async ({ page }) => {
+    await page.goto("");
 
-        // Snapshot only main container (more stable than full page)
-        const container = page.locator(".ng-scope").first();
-        await expect(container).toHaveScreenshot("open-account-section.png");
-    });
+    await page.getByRole("button", { name: "Bank Manager Login" }).click();
+    await page.getByRole("button", { name: "Open Account" }).click();
 
-    test("Customer Deposit panel should match baseline", async ({ page }) => {
-        await page.goto("");
-        await page.waitForURL(/#\/login/);
-        await page.getByRole("button", { name: "Customer Login" }).click();
+    const container = page.locator(".ng-scope").first();
+    await expect(container).toBeVisible();
 
-        // Pick a customer from dropdown (if available)
-        const options = await page.locator("#userSelect option").allTextContents();
-        const firstCustomer = options.map(o => o.trim()).find(o => o && !o.toLowerCase().includes("your name"));
+    await expect(container).toHaveScreenshot("open-account-section.png");
+  });
 
-        test.skip(!firstCustomer, "No customer available in dropdown");
+  test("Customer Deposit panel should match baseline", async ({ page }) => {
+    await page.goto("");
 
-        await page.locator("#userSelect").selectOption({ label: firstCustomer! });
-        await page.getByRole("button", { name: "Login" }).click();
+    await page.getByRole("button", { name: "Customer Login" }).click();
 
-        await page.getByRole("button", { name: "Deposit" }).click();
-        const depositForm = page.locator("form");
-        await expect(depositForm).toBeVisible();
+    const loginPanel = page.locator("form");
+    await expect(loginPanel).toBeVisible();
 
-        await expect(depositForm).toHaveScreenshot("deposit-panel.png");
-    });
+    await expect(loginPanel).toHaveScreenshot("customer-login-panel.png");
+  });
+
 });

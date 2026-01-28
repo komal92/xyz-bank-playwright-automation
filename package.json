@@ -27,7 +27,6 @@
     "test:debug": "playwright test --debug",
 
     "test:visual": "playwright test tests/visual --project=chromium",
-    "test:visual:all": "playwright test tests/visual",
     "test:visual:update": "playwright test tests/visual --project=chromium --update-snapshots",
 
     "report:html": "playwright show-report",

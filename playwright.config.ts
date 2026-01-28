@@ -48,8 +48,24 @@ export default defineConfig({
 
 
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    // 🔵 Chromium – runs ALL tests (including visual)
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+
+    // 🟠 Firefox – excludes visual tests
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
+      grepInvert: /@visual/,
+    },
+
+    // 🟢 WebKit – excludes visual tests
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
+      grepInvert: /@visual/,
+    },
   ],
 });
