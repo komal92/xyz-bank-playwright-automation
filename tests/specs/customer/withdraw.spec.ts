@@ -119,7 +119,7 @@ test.describe("Customer Withdraw", { tag: "@e2e" }, () => {
       await accountPage.waitForBalanceToBe(beforeBalance);
 
       const afterBalance = await accountPage.getBalance();
-      expect(afterBalance).toBe(beforeBalance);
+      await expect(afterBalance).toBe(beforeBalance);
     }
   );
 });

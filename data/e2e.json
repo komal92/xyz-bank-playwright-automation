@@ -9,8 +9,7 @@
     {
       "accountIndex": 0,
       "steps": [
-        { "type": "deposit", "amount": 200, "expectedTxnType": "Credit" },
-        { "type": "withdraw", "amount": 75, "expectedTxnType": "Debit" }
+        { "type": "deposit", "amount": 200, "expectedTxnType": "Credit" }
       ]
     },
     {

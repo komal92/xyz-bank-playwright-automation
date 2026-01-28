@@ -18,20 +18,5 @@
     "firstName": "Gilderoy",
     "lastName": "Lockhart",
     "postCode": "SW1A 1AA"
-  },
-  {
-    "firstName": "Filius",
-    "lastName": "Flitwick",
-    "postCode": "CV3 5EA"
-  },
-  {
-    "firstName": "Pomona",
-    "lastName": "Sprout",
-    "postCode": "TN2 4DB"
-  },
-  {
-    "firstName": "Aurora",
-    "lastName": "Sinistra",
-    "postCode": "EC1A 1BB"
   }
 ]

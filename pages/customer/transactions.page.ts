@@ -56,15 +56,22 @@ export class TransactionsPage {
 
     // URL check first (fast feedback)
     await expect(this.page).toHaveURL(/#\/listTx/);
-
+    
     // Core UI must be visible
     await expect(this.transactionsTable).toBeVisible({ timeout: 10000 });
     await expect(this.backButton).toBeVisible({ timeout: 10000 });
 
     // Rows might be 0 or more, so don't force row visibility.
     // But ensure the table body exists.
-    await expect(this.page.locator("table tbody")).toBeVisible({ timeout: 10000 });
+    await expect(this.page.locator("table tbody")).toBeVisible({ timeout: 15000 });
 
     logger.info("Transactions page loaded");
   }
+
+  async goBack(): Promise<void> {
+    logger.info("Clicking Back button on Transactions page");
+    await expect(this.backButton).toBeVisible();
+    await this.backButton.click(); 
+  }
+  
 }

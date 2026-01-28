@@ -7,8 +7,9 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 export default defineConfig({
   testDir: "./tests",
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
+  
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
 
@@ -23,7 +24,8 @@ export default defineConfig({
   use: {
     // ✅ Prefer baseURL without hash for this app, then navigate using /#/login
     baseURL: process.env.BASE_URL,
-    headless: process.env.CI ? true : false,
+    headless: true,
+    viewport: { width: 1920, height: 1080 },
 
     // ✅ Artifacts that make HTML report very useful
    // viewport: { width: 1280, height: 720 },
@@ -31,7 +33,6 @@ export default defineConfig({
     trace: "retain-on-failure",         
     screenshot: "only-on-failure",
     video: "retain-on-failure",
-    viewport: null, // 👈 makes browser use full available screen
     launchOptions: {
       args: ["--start-maximized"], // Chromium-based browsers
     },

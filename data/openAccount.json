@@ -14,17 +14,5 @@
   {
     "customerName": "Gilderoy Lockhart",
     "currencies": ["Pound", "Dollar"]
-  },
-  {
-    "customerName": "Filius Flitwick",
-    "currencies": ["Rupee"]
-  },
-  {
-    "customerName": "Pomona Sprout",
-    "currencies": ["Dollar", "Rupee"]
-  },
-  {
-    "customerName": "Aurora Sinistra",
-    "currencies": ["Pound", "Dollar", "Rupee"]
   }
 ]

@@ -47,7 +47,7 @@ test.describe("Customer Deposit", { tag: "@e2e" }, () => {
       await depositPage.deposit(amountToDeposit);
 
       const afterBalance = await accountPage.getBalance();
-      expect(afterBalance).toBe(beforeBalance + amountToDeposit);
+      await expect(afterBalance).toBe(beforeBalance + amountToDeposit);
     }
   );
 });

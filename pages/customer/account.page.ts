@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { logger } from "../../utils/logger";
+import { safeRefresh } from "utils/pageUtils";
 
 export class AccountPage {
   readonly page: Page;
@@ -72,6 +73,7 @@ export class AccountPage {
   }
 
   async goToTransactions(): Promise<void> {
+    await safeRefresh(this.page);
     await expect(this.transactionsTab).toBeVisible();
     await this.transactionsTab.click();
   }
