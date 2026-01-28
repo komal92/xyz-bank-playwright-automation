@@ -1,5 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { logger } from "../../utils/logger";
+import { ManagerPage } from "../../pages/manager/manager.page";
+import { LoginPage } from "../../pages/common/login.page";
 
 export class AddCustomerPage {
   readonly page: Page;
@@ -158,5 +160,31 @@ export class AddCustomerPage {
     const value = await this.postCodeInput.inputValue();
     logger.debug(`Read post code value: ${value}`);
     return value;
+  }
+
+  /**
+   * Workflow helper: login as manager, navigate to Add Customer, add the customer.
+   * Returns the dialog message. Rerun-safe if you allow duplicate text.
+   */
+  static async addCustomerAsManager(
+    page: Page,
+    customer: { firstName: string; lastName: string; postCode: string }
+  ): Promise<string | null> {
+    const loginPage = new LoginPage(page);
+    const managerPage = new ManagerPage(page);
+    const addCustomerPage = new AddCustomerPage(page);
+
+    await loginPage.navigateToLogin();
+    await loginPage.loginAsManager();
+
+    await managerPage.navigateToAddCustomer();
+
+    await addCustomerPage.fillCustomerForm(
+      customer.firstName,
+      customer.lastName,
+      customer.postCode
+    );
+
+    return await addCustomerPage.clickAddCustomerAndGetDialogMessage();
   }
 }

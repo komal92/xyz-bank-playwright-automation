@@ -1,0 +1,23 @@
+{
+  "customer": {
+    "firstName": "Test",
+    "lastName": "User",
+    "postCodeBase": "EC1A 1BB"
+  },
+  "accountsToOpen": ["Pound", "Dollar"],
+  "actions": [
+    {
+      "accountIndex": 0,
+      "steps": [
+        { "type": "deposit", "amount": 200, "expectedTxnType": "Credit" },
+        { "type": "withdraw", "amount": 75, "expectedTxnType": "Debit" }
+      ]
+    },
+    {
+      "accountIndex": 1,
+      "steps": [
+        { "type": "deposit", "amount": 50, "expectedTxnType": "Credit" }
+      ]
+    }
+  ]
+}

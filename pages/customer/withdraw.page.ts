@@ -1,87 +1,73 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { logger } from "../../utils/logger";
 
 export class WithdrawPage {
   readonly page: Page;
 
-  // Locators
   readonly amountInput: Locator;
   readonly withdrawButton: Locator;
-  readonly backButton: Locator;
-  readonly successMessage: Locator;
-  readonly errorMessage: Locator;
+  readonly messageText: Locator;
+  readonly withdrawSection: Locator 
 
   constructor(page: Page) {
     this.page = page;
-    
-    // Initialize locators
-    this.amountInput = page.locator("input[ng-model='amount']");
-    this.withdrawButton = page.getByRole("button", { name: "Withdraw" });
-    this.backButton = page.getByRole("button", { name: "Back" });
-    this.successMessage = page.locator("text=Withdraw Successful");
-    this.errorMessage = page.locator("text=Transaction Failed");
+
+    this.amountInput = page.locator("input[placeholder='amount']");
+    this.withdrawButton = page.locator("button[type='submit']");
+    this.withdrawSection = page.locator('div[ng-show="withdrawl"]');
+
+    // message span exists for both success/failure in this app
+    this.messageText = page.locator("span[ng-show='message']");
+    logger.info("WithdrawPage initialized");
   }
 
-  async isWithdrawPageLoaded(): Promise<boolean> {
-    try {
+  async withdraw(amount: number): Promise<void> {
+    logger.info(`Withdrawing amount=${amount}`);
+
+    const value = String(amount);
+
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      logger.info(`Withdraw attempt ${attempt}`);
+
+     // await expect(this.withdrawSection).toBeVisible();
       await expect(this.amountInput).toBeVisible();
-      await expect(this.withdrawButton).toBeVisible();
-      return true;
-    } catch {
-      return false;
+
+      // Clear + fill is safer for Angular inputs
+      await this.amountInput.fill("");
+      await this.amountInput.fill(value);
+
+      // Ensure it actually entered (this catches the flaky case)
+      try {
+        await expect(this.amountInput).toHaveValue(value, { timeout: 1000 });
+      } catch (e) {
+        logger.warn(`Amount did not stick in input on attempt ${attempt}`);
+        if (attempt === 2) throw e;
+        continue; // retry
+      }
+
+      await this.amountInput.press("Tab");
+      await expect(this.withdrawButton).toBeEnabled();
+
+      // Click and wait for a signal that action happened
+      await this.withdrawButton.click();
+
+      // If your app always shows message after clicking, use that as sync point
+      const msgVisible = await this.messageText.isVisible().catch(() => false);
+      if (msgVisible) return;
+
+      logger.warn(`No message appeared after withdraw click on attempt ${attempt}`);
+      if (attempt === 2) return; // don’t hard-fail here; your test can assert balance/message
     }
   }
 
-  async enterAmount(amount: string) {
-    await this.amountInput.fill(amount);
+
+  async expectWithdrawSuccess(): Promise<void> {
+    await expect(this.messageText).toBeVisible();
+    await expect(this.messageText).toContainText("Transaction successful");
   }
 
-  async submitWithdraw() {
-    await this.withdrawButton.click();
-  }
-
-  async withdraw(amount: string) {
-    await this.enterAmount(amount);
-    await this.submitWithdraw();
-  }
-
-  async goBack() {
-    await this.backButton.click();
-    await this.page.waitForURL(/#\/account/);
-  }
-
-  async isSuccessMessageDisplayed(): Promise<boolean> {
-    try {
-      await expect(this.successMessage).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  async isErrorMessageDisplayed(): Promise<boolean> {
-    try {
-      await expect(this.errorMessage).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  async isInsufficientFundsError(): Promise<boolean> {
-    const errorText = this.page.locator("text=Insufficient Funds");
-    try {
-      await expect(errorText).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  async getAmountValue(): Promise<string> {
-    return await this.amountInput.inputValue();
-  }
-
-  async clearAmount() {
-    await this.amountInput.clear();
+  async expectWithdrawFailure(): Promise<void> {
+    await expect(this.messageText).toBeVisible();
+    await expect(this.messageText).toContainText("Transaction Failed");
   }
 }

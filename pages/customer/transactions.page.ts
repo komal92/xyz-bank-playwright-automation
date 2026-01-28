@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { logger } from "../../utils/logger";
 
 export class TransactionsPage {
   readonly page: Page;
@@ -7,88 +8,63 @@ export class TransactionsPage {
   readonly transactionsTable: Locator;
   readonly tableRows: Locator;
   readonly backButton: Locator;
-  readonly resetButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    
-    // Initialize locators
+
     this.transactionsTable = page.locator("table");
     this.tableRows = page.locator("table tbody tr");
     this.backButton = page.getByRole("button", { name: "Back" });
-    this.resetButton = page.getByRole("button", { name: "Reset" });
+
+    logger.info("TransactionsPage initialized");
   }
 
-  async isTransactionsPageLoaded(): Promise<boolean> {
+
+
+  /**
+   * Checks if transactions table has at least 1 row
+   */
+  async hasAnyRows(): Promise<boolean> {
     try {
-      await expect(this.transactionsTable).toBeVisible();
-      return true;
+      const count = await this.tableRows.count();
+      return count > 0;
     } catch {
       return false;
     }
   }
 
-  async getTransactionCount(): Promise<number> {
-    return await this.tableRows.count();
+  /**
+   * Asserts a transaction exists with amount and type (Credit/Debit)
+   * The table columns are typically: Date-Time, Amount, Transaction Type
+   */
+  async expectTransaction(amount: number, type: "Credit" | "Debit"): Promise<void> {
+    logger.info(`Verifying transaction amount=${amount}, type=${type}`);
+
+    const row = this.tableRows
+      .filter({ hasText: String(amount) })
+      .filter({ hasText: type })
+      .first();
+
+    await expect(row).toBeVisible();
   }
 
-  async getTransactionByIndex(index: number): Promise<Locator> {
-    return this.tableRows.nth(index);
-  }
+  /**
+   * Waits until Transactions page is ready for assertions/actions
+   */
+  async waitForTransactionsPageLoaded(): Promise<void> {
+    logger.info("Waiting for Transactions page to load");
 
-  getTransactionDate(index: number): Locator {
-    return this.tableRows.nth(index).locator("td").nth(0);
-  }
+    // URL check first (fast feedback)
+    await expect(this.page).toHaveURL(/#\/listTx/);
 
-  getTransactionAmount(index: number): Locator {
-    return this.tableRows.nth(index).locator("td").nth(1);
-  }
+    // Core UI must be visible
+    await expect(this.transactionsTable).toBeVisible({ timeout: 10000 });
+    await expect(this.backButton).toBeVisible({ timeout: 10000 });
 
-  getTransactionType(index: number): Locator {
-    return this.tableRows.nth(index).locator("td").nth(2);
-  }
+    // Rows might be 0 or more, so don't force row visibility.
+    // But ensure the table body exists.
+    await expect(this.page.locator("table tbody")).toBeVisible({ timeout: 10000 });
 
-  async verifyTransactionExists(amount: string, type: string): Promise<boolean> {
-    const transaction = this.page.locator(
-      `text=${amount}` + `text=${type}`
-    );
-    try {
-      await expect(transaction).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  async getFirstTransactionAmount(): Promise<string | null> {
-    if (await this.getTransactionCount() > 0) {
-      return await this.getTransactionAmount(0).textContent();
-    }
-    return null;
-  }
-
-  async getFirstTransactionType(): Promise<string | null> {
-    if (await this.getTransactionCount() > 0) {
-      return await this.getTransactionType(0).textContent();
-    }
-    return null;
-  }
-
-  async goBack() {
-    await this.backButton.click();
-    await this.page.waitForURL(/#\/account/);
-  }
-
-  async reset() {
-    await this.resetButton.click();
-  }
-
-  async isResetButtonVisible(): Promise<boolean> {
-    try {
-      await expect(this.resetButton).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
+    logger.info("Transactions page loaded");
   }
 }

@@ -34,3 +34,7 @@ export function getDepositData() {
 export function getWithdrawData() {
   return loadJsonFile("withdraw.json");
 }
+
+export function getE2EManagerToCustomerData() {
+  return loadJsonFile("e2e.json");
+}
