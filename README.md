@@ -1,40 +1,58 @@
-# XYZ Bank Test Automation (Playwright + TypeScript + BDD)
+# XYZ Bank Playwright Automation (TypeScript)
 
-## Project Overview
-This repository contains an automated test solution for the **XYZ Bank** demo application using:
-- **Playwright** + **TypeScript**
-- **Page Object Model (POM)** design pattern
-- Test suite execution via **tags** and **separate folders**
+Automated test framework for the XYZ Bank demo app using Playwright + TypeScript and Page Object Model (POM).
 
-**Application Under Test:**  
-https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login
+Application under test:
+- https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login
 
----
+## What this framework demonstrates
 
-## Tech Stack
-- Playwright
-- TypeScript
-- Cucumber (BDD) [~ Future Implementation]
-- Node.js / npm
+- Page Object Model (POM) for maintainable UI automation
+- Test suites that can be executed separately (Manager / Customer / E2E / Visual)
+- Tag-based execution (smoke / regression / e2e / visual)
+- Cross-browser execution (Chromium, Firefox, WebKit)
+- Data-driven tests using JSON + a shared dataLoader
+- Reporting: Playwright HTML report + Allure report
+- Visual regression using Playwright `toHaveScreenshot()` baseline snapshots
 
+## Tech stack
 
-npm i -D allure-playwright
-npm i -D allure-commandline
-npx playwright test
-npx allure generate allure-results --clean -o allure-report
-npx allure open allure-report
+- Playwright Test (TypeScript)
+- POM under `pages/`
+- Test specs under `tests/specs/`
+- Test data in `data/`
+- Utilities in `utils/`
+- HTML reporting (Playwright)
+- Allure reporting (allure-playwright)
 
-npm i -D @cucumber/cucumber ts-node typescript
+## Project structure
 
-BDD scenarios are executed using Cucumber, with Playwright handling browser automation and assertions.
+- `pages/`
+  - `common/` (Login page)
+  - `manager/` (Add customer, open account, customer list)
+  - `customer/` (Customer login, account, deposit, withdraw, transactions)
+- `tests/`
+  - `specs/manager/` (manager flows)
+  - `specs/customer/` (customer flows)
+  - `specs/e2e/` (end-to-end journey)
+  - `visual/` (visual regression specs)
+  - `helpers/` (dataLoader, assertions)
+  - `fixtures.ts` (shared test setup if needed)
+- `data/`
+  - `customers.json`
+  - `openAccount.json`
+  - `e2e.json`
+- `utils/`
+  - `logger.ts`
+  - `random.ts`
+- `playwright.config.ts`
+- `.env` (local only, not committed)
 
-Visual testing
-npm i -D pixelmatch pngjs
-npm i -D @types/pngjs
+## Setup
 
-npm i winston
+Prerequisites:
+- Node.js 18+ recommended
 
-
-
-
-
+Install dependencies:
+```bash
+npm install
